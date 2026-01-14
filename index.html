@@ -227,8 +227,21 @@ footer{
 </head>
 <body>
 
+<!-- Audio Elements untuk efek suara -->
 <audio id="music" loop>
   <source src="music.mp3" type="audio/mpeg">
+</audio>
+
+<audio id="clickSound" preload="auto">
+  <source src="click.mp3" type="audio/mpeg">
+</audio>
+
+<audio id="correctSound" preload="auto">
+  <source src="succes.mp3" type="audio/mpeg">
+</audio>
+
+<audio id="wrongSound" preload="auto">
+  <source src="wrong.mp3" type="audio/mpeg">
 </audio>
 
 <!-- Welcome Screen -->
@@ -311,10 +324,19 @@ footer{
 
 <script>
 const music = document.getElementById("music");
+const clickSound = document.getElementById("clickSound");
+const correctSound = document.getElementById("correctSound");
+const wrongSound = document.getElementById("wrongSound");
 const mute = document.getElementById("mute");
 const welcome = document.getElementById("welcome");
 const pinScreen = document.getElementById("pinScreen");
 const pinError = document.getElementById("pinError");
+
+// Fungsi untuk memutar efek suara
+function playSound(soundElement) {
+  soundElement.currentTime = 0; // Reset ke awal
+  soundElement.play().catch(e => console.log("Audio error:", e));
+}
 
 // Background random
 const backgrounds = ['bg/bg1.jpg','bg/bg2.jpg','bg/bg3.jpg'];
@@ -325,8 +347,9 @@ function changeBackground() {
 changeBackground();
 setInterval(changeBackground, 5000);
 
-// Show PIN screen
+// Show PIN screen dengan efek suara
 function showPin(){
+  playSound(clickSound); // Mainkan suara klik
   welcome.style.opacity = 0;
   setTimeout(()=>{
     welcome.style.display = "none";
@@ -344,14 +367,24 @@ pinInputs.forEach((input, i)=>{
       pinInputs[i+1].focus();
     }
   });
+  
+  // Tambah efek suara klik saat mengetik PIN
+  input.addEventListener('focus', () => {
+    playSound(clickSound);
+  });
 });
 
 // Correct PIN
 const correctPin = "260507";
 
 function checkPin(){
+  playSound(clickSound); // Suara saat tombol submit ditekan
+  
   const enteredPin = Array.from(pinInputs).map(input=>input.value).join('');
+  
   if(enteredPin === correctPin){
+    playSound(correctSound); // Suara untuk PIN benar
+    
     pinScreen.style.opacity = 0;
     setTimeout(()=>{
       pinScreen.style.display = "none";
@@ -363,6 +396,8 @@ function checkPin(){
       setInterval(love, 400);
     },500);
   }else{
+    playSound(wrongSound); // Suara untuk PIN salah
+    
     pinError.style.display = "block";
     pinError.classList.add('shake');
     setTimeout(()=>pinError.classList.remove('shake'),500);
@@ -385,6 +420,7 @@ function fadeIn(){
 function toggle(){
   music.muted = !music.muted;
   mute.innerHTML = music.muted ? "🔇" : "🔊";
+  playSound(clickSound); // Tambah efek suara saat mute/unmute
 }
 
 // Hearts animation
@@ -397,8 +433,15 @@ function love(){
   document.body.appendChild(h);
   setTimeout(()=> h.remove(), 6000);
 }
+
+// Tambah event listener untuk suara klik pada semua tombol
+document.querySelectorAll('button').forEach(button => {
+  button.addEventListener('click', function() {
+    if(this.id !== 'mute') { // Hindari double sound pada mute button
+      playSound(clickSound);
+    }
+  });
+});
 </script>
 </body>
 </html>
-
-
