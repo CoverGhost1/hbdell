@@ -6,8 +6,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 <style>
+/* Reset */
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif}
 
+/* Body + Background */
 body{
   background:linear-gradient(120deg,#ffb6c1,#d8b4f8,#ffe4e1);
   background-size:400% 400%;
@@ -21,6 +23,7 @@ body{
   100%{background-position:0% 50%}
 }
 
+/* Welcome + PIN Screen */
 #welcome, #pinScreen{
   position:fixed;
   inset:0;
@@ -36,8 +39,8 @@ body{
 .wbox, .pbox{
   position: relative;
   z-index: 2;
-  background: rgba(255, 255, 255, 0.85);
-  padding: 50px;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 50px 30px;
   border-radius: 30px;
   text-align: center;
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
@@ -51,7 +54,7 @@ body{
 
 .wbox h1, .pbox h1{
   font-family:'Dancing Script';
-  font-size:54px;
+  font-size:48px;
   color:#e75480;
 }
 
@@ -72,25 +75,36 @@ body{
 #content{display:none}
 #pinScreen{display:none}
 
+/* PIN Input */
+.pinWrapper{
+  display:flex;
+  justify-content:center;
+  gap:12px;
+  margin-top:25px;
+}
+
 .pinInput{
-  width:50px;
-  height:50px;
-  font-size:28px;
+  width:55px;
+  height:55px;
+  font-size:26px;
   text-align:center;
-  margin:0 6px;
-  border-radius:15px;
+  border-radius:50%;
   border:2px solid #e75480;
   outline:none;
   transition:.3s;
 }
 
-.pinInput:focus{border-color:#ff4d6d; transform:scale(1.05); box-shadow:0 0 15px #ff4d6d;}
+.pinInput:focus{
+  border-color:#ff4d6d;
+  transform:scale(1.1);
+  box-shadow:0 0 15px #ff4d6d;
+}
+
 .pinError{
   color:red;
   margin-top:15px;
   display:none;
   font-weight:600;
-  animation:none;
 }
 
 .shake{
@@ -106,6 +120,7 @@ body{
   100%{transform:translateX(0);}
 }
 
+/* Content Sections */
 section{
   min-height:100vh;
   display:flex;
@@ -190,6 +205,24 @@ footer{
   cursor:pointer;
   display:none;
 }
+
+/* Responsive Android */
+@media (max-width:480px){
+  .pinInput{
+    width:45px;
+    height:45px;
+    font-size:22px;
+  }
+  .pinWrapper{
+    gap:10px;
+  }
+  .wbox, .pbox{
+    padding:30px 20px;
+  }
+  .wbox h1, .pbox h1{
+    font-size:36px;
+  }
+}
 </style>
 </head>
 <body>
@@ -198,6 +231,7 @@ footer{
   <source src="music.mp3" type="audio/mpeg">
 </audio>
 
+<!-- Welcome Screen -->
 <div id="welcome">
   <div class="wbox">
     <h1>Hai Bub 🤍</h1>
@@ -206,10 +240,11 @@ footer{
   </div>
 </div>
 
+<!-- PIN Screen -->
 <div id="pinScreen">
   <div class="pbox">
     <h1>Masukkan PIN 💖</h1>
-    <div>
+    <div class="pinWrapper">
       <input type="password" maxlength="1" class="pinInput" id="pin1" inputmode="numeric" pattern="\d*">
       <input type="password" maxlength="1" class="pinInput" id="pin2" inputmode="numeric" pattern="\d*">
       <input type="password" maxlength="1" class="pinInput" id="pin3" inputmode="numeric" pattern="\d*">
@@ -222,8 +257,10 @@ footer{
   </div>
 </div>
 
+<!-- Mute Button -->
 <button id="mute" onclick="toggle()">🔊</button>
 
+<!-- Main Content -->
 <div id="content">
   <section>
     <div class="box">
@@ -278,7 +315,7 @@ const welcome = document.getElementById("welcome");
 const pinScreen = document.getElementById("pinScreen");
 const pinError = document.getElementById("pinError");
 
-// Background
+// Background random
 const backgrounds = ['bg/bg1.jpg','bg/bg2.jpg','bg/bg3.jpg'];
 function changeBackground() {
   const bg = backgrounds[Math.floor(Math.random() * backgrounds.length)];
@@ -287,7 +324,7 @@ function changeBackground() {
 changeBackground();
 setInterval(changeBackground, 5000);
 
-// Tampilkan PIN
+// Show PIN screen
 function showPin(){
   welcome.style.opacity = 0;
   setTimeout(()=>{
@@ -301,7 +338,6 @@ function showPin(){
 const pinInputs = document.querySelectorAll('.pinInput');
 pinInputs.forEach((input, i)=>{
   input.addEventListener('input', ()=>{
-    // hanya angka
     input.value = input.value.replace(/[^0-9]/g,'');
     if(input.value.length === 1 && i < pinInputs.length-1){
       pinInputs[i+1].focus();
@@ -309,8 +345,8 @@ pinInputs.forEach((input, i)=>{
   });
 });
 
-// PIN yang benar
-const correctPin = "123456"; // ganti PIN sesuai keinginan
+// Correct PIN
+const correctPin = "123456";
 
 function checkPin(){
   const enteredPin = Array.from(pinInputs).map(input=>input.value).join('');
@@ -334,7 +370,7 @@ function checkPin(){
   }
 }
 
-// Fade in music
+// Music fade in
 function fadeIn(){
   let v = 0;
   let i = setInterval(()=>{
@@ -350,7 +386,7 @@ function toggle(){
   mute.innerHTML = music.muted ? "🔇" : "🔊";
 }
 
-// Hearts
+// Hearts animation
 function love(){
   const h = document.createElement("div");
   h.className = "heart";
