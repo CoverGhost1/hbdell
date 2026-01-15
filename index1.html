@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Secret 💖</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+/* Reset */
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif}
+
+/* Body + Background dengan efek gradien dinamis */
+body{
+  background:linear-gradient(120deg,#ffb6c1,#d8b4f8,#ffe4e1);
+  background-size:400% 400%;
+  animation:bg 14s ease infinite;
+  overflow-x:hidden;
+  min-height:100vh;
+  position:relative;
+}
+
+@keyframes bg{
+  0%{background-position:0% 50%}
+  50%{background-position:100% 50%}
+  100%{background-position:0% 50%}
+}
+
+/* Efek Hujan Emas/Glitter */
+.rain-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.raindrop {
+  position: absolute;
+  top: -50px;
+  width: 3px;
+  height: 30px;
+  background: linear-gradient(to bottom, transparent, gold);
+  opacity: 0.6;
+  animation: rain-fall linear infinite;
+}
+
+.raindrop:nth-child(3n) {
+  background: linear-gradient(to bottom, transparent, #ff6bcb);
+}
+
+.raindrop:nth-child(3n+1) {
+  background: linear-gradient(to bottom, transparent, #ffb6c1);
+}
+
+.raindrop:nth-child(5n) {
+  width: 6px;
+  height: 40px;
+  opacity: 0.8;
+}
+
+@keyframes rain-fall {
+  to {
+    transform: translateY(110vh);
+  }
+}
+
+/* Welcome + PIN Screen */
+#welcome, #pinScreen{
+  position:fixed;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background-size:cover;
+  background-position:center;
+  z-index:1000;
+  transition:1s;
+  background-color: rgba(0,0,0,0.3);
+}
+
+.wbox, .pbox{
+  position: relative;
+  z-index: 2;
+  background: rgba(255, 255, 255, 0.5);
+  padding: 50px 40px;
+  border-radius: 30px;
+  text-align: center;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+  animation: float 3s ease-in-out infinite;
+  border: 2px solid rgba(231, 84, 128, 0.2);
+  backdrop-filter: blur(5px);
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.wbox h1, .pbox h1{
+  font-family:'Dancing Script';
+  font-size:56px;
+  color:#e75480;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+  margin-bottom: 15px;
+}
+
+.enter, .submitPin{
+  margin-top:30px;
+  padding:15px 40px;
+  border:none;
+  border-radius:30px;
+  background: linear-gradient(to right, #e75480, #ff6bcb);
+  color:white;
+  font-size:16px;
+  cursor:pointer;
+  transition:.3s;
+  font-weight:600;
+  letter-spacing: 1px;
+  box-shadow: 0 5px 15px rgba(231, 84, 128, 0.4);
+  position: relative;
+  overflow: hidden;
+}
+
+.enter::before, .submitPin::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+  transition: 0.5s;
+}
+
+.enter:hover, .submitPin:hover{
+  transform:scale(1.1);
+  box-shadow: 0 8px 20px rgba(231, 84, 128, 0.6);
+}
+
+.enter:hover::before, .submitPin:hover::before {
+  left: 100%;
+}
+
+#content{display:none}
+#pinScreen{display:none}
+
+/* PIN Input dengan efek khusus */
+.pinWrapper{
+  display:flex;
+  justify-content:center;
+  gap:15px;
+  margin-top:30px;
+  margin-bottom: 10px;
+}
+
+.pinInput{
+  width:60px;
+  height:60px;
+  font-size:28px;
+  text-align:center;
+  border-radius:15px;
+  border:3px solid #e75480;
+  outline:none;
+  transition:.3s;
+  background-color: rgba(255,255,255,0.9);
+  font-weight: bold;
+}
+
+.pinInput:focus{
+  border-color:#ff4d6d;
+  transform:scale(1.1);
+  box-shadow:0 0 20px #ff4d6d;
+  background-color: #fff;
+}
+
+.pinError{
+  color:red;
+  margin-top:15px;
+  display:none;
+  font-weight:600;
+  padding: 10px;
+  border-radius: 10px;
+  background-color: rgba(255,0,0,0.1);
+}
+
+.shake{
+  animation: shake 0.5s;
+}
+
+@keyframes shake{
+  0%{transform:translateX(0);}
+  20%{transform:translateX(-10px);}
+  40%{transform:translateX(10px);}
+  60%{transform:translateX(-10px);}
+  80%{transform:translateX(10px);}
+  100%{transform:translateX(0);}
+}
+
+/* Content Sections */
+section{
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:80px 20px;
+  position: relative;
+  z-index: 2;
+}
+
+.box{
+  max-width:900px;
+  background:rgba(255,255,255,.95);
+  padding:60px 50px;
+  border-radius:30px;
+  text-align:center;
+  box-shadow:0 30px 60px rgba(0,0,0,.15);
+  position: relative;
+  overflow: hidden;
+  border: 2px solid rgba(231, 84, 128, 0.1);
+}
+
+.box::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 5px;
+  background: linear-gradient(to right, #ff6bcb, #e75480, #ff6bcb);
+}
+
+h1.main{
+  font-family:'Dancing Script';
+  font-size:64px;
+  color:#e75480;
+  margin-bottom: 20px;
+  position: relative;
+  display: inline-block;
+}
+
+h1.main::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 150px;
+  height: 3px;
+  background: linear-gradient(to right, #ff6bcb, #e75480);
+  border-radius: 2px;
+}
+
+h2{
+  font-weight:400;
+  margin:20px 0;
+  color: #555;
+  font-size: 24px;
+}
+
+p{line-height:1.9; font-size: 18px; color: #444;}
+.highlight{color:#e75480;font-weight:600;}
+
+.gallery{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:25px;
+  margin-top:40px;
+}
+
+.gallery img{
+  width:100%;
+  height:260px;
+  object-fit:cover;
+  border-radius:20px;
+  transition:.4s;
+  box-shadow:0 15px 30px rgba(0,0,0,.2);
+  border: 3px solid white;
+}
+
+.gallery img:hover{
+  transform:scale(1.07) rotate(2deg);
+  box-shadow:0 20px 40px rgba(0,0,0,.3);
+}
+
+footer{
+  margin-top:40px;
+  color:#777;
+  font-size:16px;
+  padding-top: 20px;
+  border-top: 1px solid #eee;
+}
+
+/* Floating Hearts */
+.heart{
+  position:fixed;
+  top:-10px;
+  color:#ff4d6d;
+  font-size:22px;
+  animation:fall linear forwards;
+  pointer-events:none;
+  z-index: 1;
+  text-shadow: 0 0 10px rgba(255,255,255,0.8);
+}
+
+@keyframes fall{
+  to{transform:translateY(110vh) rotate(360deg);opacity:0}
+}
+
+/* Birthday Candle */
+.candle {
+  position: fixed;
+  bottom: 30px;
+  left: 30px;
+  width: 30px;
+  height: 60px;
+  background: linear-gradient(to right, #ff9966, #ff5e62);
+  border-radius: 10px 10px 0 0;
+  z-index: 100;
+  box-shadow: 0 0 20px rgba(255, 94, 98, 0.7);
+  animation: flicker 1.5s infinite alternate;
+}
+
+.candle::before {
+  content: '';
+  position: absolute;
+  top: -15px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 15px;
+  height: 25px;
+  background: linear-gradient(to bottom, #ffef00, #ff9500);
+  border-radius: 50% 50% 20% 20%;
+  box-shadow: 0 0 20px rgba(255, 239, 0, 0.8);
+}
+
+@keyframes flicker {
+  0%, 100% { box-shadow: 0 0 20px rgba(255, 94, 98, 0.7); }
+  50% { box-shadow: 0 0 30px rgba(255, 94, 98, 1); }
+}
+
+/* Mute Button */
+#mute{
+  position:fixed;
+  bottom:20px;
+  right:20px;
+  background:white;
+  border:none;
+  border-radius:50%;
+  width:50px;
+  height:50px;
+  font-size:20px;
+  box-shadow:0 10px 25px rgba(0,0,0,.25);
+  cursor:pointer;
+  display:none;
+  z-index: 1000;
+  transition: .3s;
+}
+
+#mute:hover {
+  transform: scale(1.1);
+  background: #f8f8f8;
+}
+
+/* Konfeti Effect */
+.confetti {
+  position: fixed;
+  width: 15px;
+  height: 15px;
+  background-color: #f00;
+  opacity: 0;
+  z-index: 999;
+  pointer-events: none;
+}
+
+/* Progress Bar */
+.progress-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 5px;
+  background-color: rgba(255,255,255,0.2);
+  z-index: 1001;
+}
+
+.progress-bar {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(to right, #ff6bcb, #e75480);
+  transition: width 0.3s;
+}
+
+/* Responsive Android */
+@media (max-width:480px){
+  .pinInput{
+    width:45px;
+    height:45px;
+    font-size:22px;
+  }
+  .pinWrapper{
+    gap:10px;
+  }
+  .wbox, .pbox{
+    padding:30px 20px;
+    margin: 0 15px;
+  }
+  .wbox h1, .pbox h1{
+    font-size:36px;
+  }
+  h1.main {
+    font-size: 42px;
+  }
+  .box {
+    padding: 40px 25px;
+  }
+  .gallery {
+    grid-template-columns: 1fr;
+  }
+  .candle {
+    display: none;
+  }
+}
+
+/* Efek masuk konten */
+.fade-in {
+  animation: fadeInUp 1s ease forwards;
+  opacity: 0;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- Audio Elements untuk efek suara -->
+<audio id="music" loop>
+  <source src="music.mp3" type="audio/mpeg">
+</audio>
+
+<audio id="clickSound" preload="auto">
+  <source src="click.mp3" type="audio/mpeg">
+</audio>
+
+<audio id="correctSound" preload="auto">
+  <source src="succes.mp3" type="audio/mpeg">
+</audio>
+
+<audio id="wrongSound" preload="auto">
+  <source src="wrong.mp3" type="audio/mpeg">
+</audio>
+
+<!-- Efek Hujan -->
+<div class="rain-container" id="rain"></div>
+
+<!-- Progress Bar -->
+<div class="progress-container">
+  <div class="progress-bar" id="progressBar"></div>
+</div>
+
+<!-- Welcome Screen -->
+<div id="welcome">
+  <div class="wbox">
+    <h1>Hai Bub 💖</h1>
+    <p>Ada sesuatu yang mau aku kasih tau...</p>
+    <button class="enter" onclick="showPin()">Buka 🎁</button>
+  </div>
+</div>
+
+<!-- PIN Screen -->
+<div id="pinScreen">
+  <div class="pbox">
+    <h1>Masukkan Kode Rahasia</h1>
+    <p>Hint: Tanggal spesial kita</p>
+    <div class="pinWrapper">
+      <input type="password" maxlength="1" class="pinInput" id="pin1" inputmode="numeric" pattern="\d*">
+      <input type="password" maxlength="1" class="pinInput" id="pin2" inputmode="numeric" pattern="\d*">
+      <input type="password" maxlength="1" class="pinInput" id="pin3" inputmode="numeric" pattern="\d*">
+      <input type="password" maxlength="1" class="pinInput" id="pin4" inputmode="numeric" pattern="\d*">
+      <input type="password" maxlength="1" class="pinInput" id="pin5" inputmode="numeric" pattern="\d*">
+      <input type="password" maxlength="1" class="pinInput" id="pin6" inputmode="numeric" pattern="\d*">
+    </div>
+    <div class="pinError" id="pinError">Kode salah! Coba lagi ya 😊</div>
+    <button class="submitPin" onclick="checkPin()">Enter 💌</button>
+  </div>
+</div>
+
+<!-- Birthday Candle -->
+<div class="candle" id="candle"></div>
+
+<!-- Mute Button -->
+<button id="mute" onclick="toggle()">🔊</button>
+
+<!-- Main Content -->
+<div id="content">
+  <section class="fade-in">
+    <div class="box">
+      <h1 class="main">Happy Sweet Seventeen 💖</h1>
+      <h2>16 Januari 2026</h2>
+      <p>
+        Di umur <span class="highlight">17 tahun</span> ini,<br>
+        semoga dunia lebih lembut ke kamu,<br>
+        semoga kamu selalu dikelilingi orang-orang baik,<br>
+        dan kamu selalu bangga jadi diri sendiri.
+        <br><br>
+        always be a sweet girl 🤍
+      </p>
+      <div style="margin-top: 30px; font-size: 48px;">
+        🎉🎈
+      </div>
+    </div>
+  </section>
+  <section class="fade-in">
+    <div class="box">
+      <h2>Galeri Kenangan Kecil 📸</h2>
+      <div class="gallery">
+        <img src="foto1.jpg">
+        <img src="foto2.jpg">
+        <img src="foto3.jpg">
+        <img src="foto4.jpg">
+      </div>
+    </div>
+  </section>
+  <section class="fade-in">
+    <div class="box">
+      <h2>Pesan Kecil 🤍</h2>
+      <p>
+        Kalau suatu saat nanti kamu capek,<br>
+        semoga kamu inget kalo ada seseorang<br>
+        yang pernah bikin ini buat kamu🤪.
+        <br><br>
+        Selamat ulang tahun yaaa.<br>
+        Tetap jadi Adel yang aku kenal. <br>
+        Maaf kalo selama ini ada hal yang ngebuat <br> kamu kesel sama aku Mwehehhe.<br>
+        Always Be Happy Bubb... <br> <br>
+        Thanks :]
+      </p>
+      <footer>
+        Salam Hangat,<br>
+        <span style="color: #e75480; font-weight: 600;">Penggemar nomor satu 😏</span>
+      </footer>
+      <div style="margin-top: 30px; font-size: 40px;">
+        💖✨
+      </div>
+    </div>
+  </section>
+</div>
+
+<script>
+const music = document.getElementById("music");
+const clickSound = document.getElementById("clickSound");
+const correctSound = document.getElementById("correctSound");
+const wrongSound = document.getElementById("wrongSound");
+const mute = document.getElementById("mute");
+const welcome = document.getElementById("welcome");
+const pinScreen = document.getElementById("pinScreen");
+const pinError = document.getElementById("pinError");
+const progressBar = document.getElementById("progressBar");
+const rainContainer = document.getElementById("rain");
+
+// Inisialisasi hujan
+function createRain() {
+  for (let i = 0; i < 100; i++) {
+    const raindrop = document.createElement('div');
+    raindrop.classList.add('raindrop');
+    raindrop.style.left = Math.random() * 100 + 'vw';
+    raindrop.style.animationDuration = (3 + Math.random() * 5) + 's';
+    raindrop.style.animationDelay = Math.random() * 5 + 's';
+    rainContainer.appendChild(raindrop);
+  }
+}
+
+// Fungsi untuk memutar efek suara
+function playSound(soundElement) {
+  soundElement.currentTime = 0;
+  soundElement.play().catch(e => console.log("Audio error:", e));
+}
+
+// Background random dengan gambar yang lebih romantis
+const backgrounds = ['bg/bg1.jpg','bg/bg2.jpg','bg/bg3.jpg'];
+
+function changeBackground() {
+  const bg = backgrounds[Math.floor(Math.random() * backgrounds.length)];
+  welcome.style.backgroundImage = `url('${bg}')`;
+}
+
+// Progress bar saat scroll
+function updateProgressBar() {
+  const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+  const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+  const scrolled = (winScroll / height) * 100;
+  progressBar.style.width = scrolled + '%';
+}
+
+window.addEventListener('scroll', updateProgressBar);
+
+// Inisialisasi
+createRain();
+changeBackground();
+setInterval(changeBackground, 8000);
+
+// Show PIN screen dengan efek suara
+function showPin(){
+  playSound(clickSound);
+  welcome.style.opacity = 0;
+  setTimeout(()=>{
+    welcome.style.display = "none";
+    pinScreen.style.display = "flex";
+    document.getElementById("pin1").focus();
+  }, 800);
+}
+
+// PIN input
+const pinInputs = document.querySelectorAll('.pinInput');
+pinInputs.forEach((input, i)=>{
+  input.addEventListener('input', ()=>{
+    input.value = input.value.replace(/[^0-9]/g,'');
+    if(input.value.length === 1 && i < pinInputs.length-1){
+      pinInputs[i+1].focus();
+    }
+  });
+  
+  input.addEventListener('focus', () => {
+    playSound(clickSound);
+    input.style.backgroundColor = '#fff9fc';
+  });
+  
+  input.addEventListener('blur', () => {
+    input.style.backgroundColor = '';
+  });
+});
+
+// Correct PIN (tanggal spesial: 260507)
+const correctPin = "260507";
+
+// Efek konfeti
+function createConfetti() {
+  const colors = ['#ff6bcb', '#e75480', '#ffb347', '#7bed9f', '#70a1ff'];
+  for (let i = 0; i < 150; i++) {
+    const confetti = document.createElement('div');
+    confetti.classList.add('confetti');
+    confetti.style.left = Math.random() * 100 + 'vw';
+    confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+    confetti.style.width = Math.random() * 10 + 5 + 'px';
+    confetti.style.height = Math.random() * 10 + 5 + 'px';
+    confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+    
+    document.body.appendChild(confetti);
+    
+    // Animasi konfeti
+    const animation = confetti.animate([
+      { 
+        opacity: 1, 
+        transform: `translateY(0) rotate(0deg)` 
+      },
+      { 
+        opacity: 1, 
+        transform: `translateY(${window.innerHeight}px) rotate(${Math.random() * 720}deg)` 
+      }
+    ], {
+      duration: Math.random() * 3000 + 2000,
+      easing: 'cubic-bezier(0.215, 0.610, 0.355, 1)'
+    });
+    
+    animation.onfinish = () => confetti.remove();
+  }
+}
+
+function checkPin(){
+  playSound(clickSound);
+  
+  const enteredPin = Array.from(pinInputs).map(input=>input.value).join('');
+  
+  if(enteredPin === correctPin){
+    playSound(correctSound);
+    createConfetti();
+    
+    pinScreen.style.opacity = 0;
+    setTimeout(()=>{
+      pinScreen.style.display = "none";
+      document.getElementById("content").style.display = "block";
+      mute.style.display = "block";
+      music.volume = 0;
+      music.play();
+      fadeIn();
+      setInterval(love, 300);
+      
+      // Animasi untuk setiap section
+      document.querySelectorAll('.fade-in').forEach((section, index) => {
+        setTimeout(() => {
+          section.style.animationDelay = `${index * 0.3}s`;
+          section.classList.add('fade-in');
+        }, 500);
+      });
+    },500);
+  }else{
+    playSound(wrongSound);
+    
+    pinError.style.display = "block";
+    pinError.classList.add('shake');
+    setTimeout(()=>pinError.classList.remove('shake'),500);
+    
+    // Reset input dengan animasi
+    pinInputs.forEach((input, i) => {
+      setTimeout(() => {
+        input.style.transform = 'scale(0.8)';
+        setTimeout(() => {
+          input.value = '';
+          input.style.transform = '';
+        }, 200);
+      }, i * 50);
+    });
+    
+    setTimeout(() => pinInputs[0].focus(), 600);
+  }
+}
+
+// Music fade in
+function fadeIn(){
+  let v = 0;
+  let i = setInterval(()=>{
+    v += 0.01;
+    music.volume = v;
+    if(v >= 0.5) clearInterval(i);
+  }, 100);
+}
+
+// Mute toggle
+function toggle(){
+  music.muted = !music.muted;
+  mute.innerHTML = music.muted ? "🔇" : "🔊";
+  playSound(clickSound);
+  mute.style.backgroundColor = music.muted ? '#ffefef' : 'white';
+}
+
+// Floating hearts dengan variasi
+function love(){
+  const h = document.createElement("div");
+  h.className = "heart";
+  const hearts = ['💖', '💕', '💗', '💓', '💘', '💝', '🌸', '🎀'];
+  h.innerHTML = hearts[Math.floor(Math.random() * hearts.length)];
+  h.style.left = Math.random() * 100 + "vw";
+  h.style.fontSize = (Math.random() * 10 + 18) + "px";
+  h.style.animationDuration = (3 + Math.random() * 4) + "s";
+  document.body.appendChild(h);
+  setTimeout(()=> h.remove(), 7000);
+}
+
+// Tambah event listener untuk suara klik pada semua tombol
+document.querySelectorAll('button').forEach(button => {
+  button.addEventListener('click', function() {
+    if(this.id !== 'mute') {
+      playSound(clickSound);
+    }
+  });
+});
+
+// Efek hover untuk gambar
+document.addEventListener('DOMContentLoaded', function() {
+  const galleryImages = document.querySelectorAll('.gallery img');
+  galleryImages.forEach(img => {
+    img.addEventListener('mouseenter', function() {
+      playSound(clickSound);
+    });
+  });
+});
+
+// Tambahkan efek ketik untuk welcome message
+const welcomeMessage = document.querySelector('.wbox p');
+const originalText = welcomeMessage.textContent;
+let charIndex = 0;
+
+function typeWriter() {
+  if (charIndex < originalText.length) {
+    welcomeMessage.textContent = originalText.substring(0, charIndex + 1);
+    charIndex++;
+    setTimeout(typeWriter, 50);
+  }
+}
+
+// Mulai efek ketik setelah halaman dimuat
+setTimeout(typeWriter, 1000);
+</script>
+</body>
+</html>
